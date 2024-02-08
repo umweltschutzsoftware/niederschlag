@@ -219,15 +219,12 @@ if st.button("Upload .AKTERM Datei"):
 
 # Button, um die akterm_instance zu aktualisieren und herunterzuladen
 if st.button("Aktualisierte AKTERM-Datei herunterladen"):
-    st.write(precipitation_data_path)
     precipitation_data = precipitation.from_file(precipitation_data_path)
     akterm_instance = akterm.from_file(akterm_instance_path)
-    st.write(akterm_instance)
-    st.write(precipitation_data)
+    st.write("Aktermdatei zum Download bereit.")
     if akterm_instance is not None and precipitation_data is not None:
         # Führen Sie die updatePrecipitation-Methode aus
-        akterm_instance.updatePrecipitation(precipitation_data)
-        
+        akterm_instance.updatePrecipitation(precipitation_data)        
         # Speichern Sie die aktualisierte AKTERM-Datei temporär
         updated_akterm_path = os.path.join(temp_dir, "updated_akterm.akterm")
         akterm_instance.save(updated_akterm_path)
