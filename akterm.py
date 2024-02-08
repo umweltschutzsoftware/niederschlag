@@ -14,12 +14,15 @@ class akterm:
 
         :param path_or_obj: Path to the AKTERM file or akterm object.
         :return: akterm object
-        """
+        """ 
         if isinstance(path_or_obj, akterm):
            return path_or_obj
         
         try:
             with open(path_or_obj, 'r') as file:
+                z0s=None
+                z=None        
+                
                 # Read the header lines to extract information
                 ak_line_index = next((i for i, line in enumerate(file) if line.startswith('AK')), None)
                 file.seek(0)
@@ -34,21 +37,10 @@ class akterm:
                 print("Date Line:", date_line)
                 
                 name = ' '.join(name_line[2:])
-                end_date_str=date_line[4]
-                start_date_str = date_line[2]
-                
-                ha_line = header_lines[3].strip().split()
-                print("Anohöhe: ", ha_line)
-                ha = [item for item in ha_line if item.isdigit()]
-                z0s = ha_line[15].split('=')[1][:-1]
-                z = ha_line[16].split('=')[1]
-                
-                print("Start Date:", start_date_str)
-                print("End Date:", end_date_str)              
-                     
-                start_date = datetime.datetime.strptime(start_date_str, "%d.%m.%Y")
-                end_date = datetime.datetime.strptime(end_date_str, "%d.%m.%Y")
 
+                ha_line = header_lines[3].strip().split()
+                ha = [item for item in ha_line if item.isdigit()]
+                                    
                 file.seek(0)
 
                 df = pd.read_csv(file, delim_whitespace=True,skiprows=int(ak_line_index), names=[
@@ -56,14 +48,9 @@ class akterm:
                     'HM', 'QB3', 'PCP', 'QB4'
                 ])
                 print(df[:2])
-
-                # Add additional columns to DataFrame
-                #df['DATETIME'] = pd.to_datetime(df[['JAHR', 'MONAT', 'TAG', 'STUN']].astype(int))
-                #df['YEAR'] = df['JAHR'].astype(int)
-
         except Exception as e:
             raise ValueError(f"Error reading AKTERM file: {e}")
-        return cls(df['STA'].iloc[0], name, start_date.year, z, df['FF'], df['DD'], df['KM'], z0s, ha, precipitation=df['PCP'], month=1, day=1)
+        return cls(df['STA'].iloc[0], name, df['JAHR'].iloc[0] , z, df['FF'], df['DD'], df['KM'], z0s, ha, precipitation=df['PCP'], month=1, day=1)
 
   def __init__(self, sta, name, year, z, u, dd, kmclass, z0s, ha, precipitation=None, month=1, day=1):
     """
