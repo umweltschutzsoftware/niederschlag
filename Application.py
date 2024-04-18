@@ -95,8 +95,7 @@ def stationsfromtxt(url, urlfmt=None):
   return allstationdf
 
 st.write(
-    '''#Niederschlags .akterm erstellen
-    Bei Upload einer *.akterm Datei wird lorum 
+    '''.akterm Niederschlag hinzufügen
     ''')
 
 #Create Map and pin geolocations
