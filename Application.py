@@ -22,7 +22,9 @@ st.set_page_config(
             page_title="R&H Niederschlag"
 )
 temp_dir = os.path.join('.', 'temp')
-os.makedirs(temp_dir,exist_ok=True)
+os.makedirs(temp_dir,exist_ok=True) 
+# shutil.rmtree(temp_dir)
+# os.makedirs(temp_dir,exist_ok=True)
 precipitation_data_path= os.path.join(temp_dir, "precipitation_data.txt")
 akterm_instance_path = os.path.join(temp_dir, "akterm_instance.akterm")
 

@@ -6,16 +6,16 @@ import math
 import precipitation
 import re
 
-class akterm:
+class timeseries:
   @classmethod
   def from_file(cls, path_or_obj):
         """
-        Create akterm from a given AKTERM file.
+        Create timeseries from a given DMNA file.
 
-        :param path_or_obj: Path to the AKTERM file or akterm object.
-        :return: akterm object
+        :param path_or_obj: Path to the DMNA file or timeseries object.
+        :return: timeseries object
         """ 
-        if isinstance(path_or_obj, akterm):
+        if isinstance(path_or_obj, timeseries):
            return path_or_obj
         
         try:
@@ -43,7 +43,7 @@ class akterm:
                                     
                 file.seek(0)
 
-                df = pd.read_csv(file, delim_whitespace=True,skiprows=int(ak_line_index), names=[
+                df = pd.read_csv(file, delim_whitespace=True,header = 5 , names=[
                     'KENN', 'STA', 'JAHR', 'MONAT', 'TAG', 'STUN', 'NULL', 'QDD', 'QFF', 'DD', 'FF', 'QB1', 'KM', 'QB2',
                     'HM', 'QB3', 'PCP', 'QB4'
                 ])
@@ -132,8 +132,7 @@ class akterm:
       self.withprecipitation = True
       self.__formatprecipitation()
       df.loc[df['PCP']] = self.formattedPrecipitation
-      df.loc[df['QB4']] = [1]*n
-
+      df.loc[df['QB4']] = [1]*n 
       df.loc[df['PCP'] == 0, 'QB4'] = 9
 
     else:
@@ -188,9 +187,9 @@ class akterm:
     if not all(col in self.df.columns for col in ['JAHR', 'MONAT', 'TAG', 'STUN']):
         raise ValueError("akterm object must have 'JAHR', 'MONAT', 'TAG', and 'STUN' columns.")   
 
-    if not self.withprecipitation:
-       self.df['PCP']=[None] * len(self.df)
-       self.df['QB4']=[None] * len(self.df)
+    
+    self.df['PCP']=[None] * len(self.df)
+    self.df['QB4']=[None] * len(self.df)
 
     index_cols = ['JAHR', 'MONAT', 'TAG', 'STUN']
     merged_df = pd.merge(self.df[index_cols], precipitation.df[['JAHR', 'MONAT', 'TAG', 'STUN', 'PCP', 'QB4']], on=index_cols, how='left')
